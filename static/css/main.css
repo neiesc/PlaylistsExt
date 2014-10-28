@@ -1,0 +1,11 @@
+#player {
+  float: left;
+}
+#controls {
+  float: left;
+  margin: 10px;
+}
+footer {
+  clear: both;
+  padding: 10px;
+}

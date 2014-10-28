@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>[Draft] PlaylistsEXT - An extended playlists for YouTube.</title>
+
+    <style type="text/css">
+      #player {
+        float: left;
+      }
+
+      #controls {
+        float: left;
+        margin: 10px;
+      }
+      footer {
+        clear: both;
+        padding: 10px;
+      }
+    </style>
+    <script src="http://www.youtube.com/player_api"></script>
+  </head>
+  <body>
+    <div id="player"></div>
+    <div id="controls">
+      <input type="text" id="videoID" />
+      <input type="button" id="addVideoID" value="Add video ID" />
+      <input type="button" id="playAll" value="Play all" />
+      <input type="button" id="removeAll" value="Remove all" />
+      
+      <input type="button" id="prev" value="Prev" />
+      <input type="button" id="next" value="Next" />
+      <ul id="videoLists"></ul>
+    </div>
+    <footer>
+      <a href="https://github.com/neiesc/PlaylistsEXT">View On GitHub</a>
+    </footer>
+
+    <script type='text/javascript'>
+        //<!controls
+        var player, currentVideoId = 0;
+        var videoIDs = [];
+
+        function onYouTubePlayerAPIReady() {
+          player = new YT.Player('player', {
+            height: '390',
+            width: '640',
+            videoId: null,
+            events: {
+              'onReady': onPlayerReady,
+              'onStateChange': onPlayStateChange
+            }
+          });
+        }
+        
+        function onPlayerReady(event) {
+          console.log(event);
+          //event.target.playVideo();
+        }
+        
+        function onPlayStateChange(event) {
+          if (event.data === 0) {
+            console.log('done', videoIDs[currentVideoId]);
+            currentVideoId++;
+            if (currentVideoId < videoIDs.length)
+            {
+                player.loadVideoById(videoIDs[currentVideoId]);
+            }
+          }
+        }
+
+        /* Controls */
+        function addVideoID() {
+          var el = document.getElementById("videoID");
+          if (el.value != '') {
+            console.log('add', el.value);
+            videoIDs.push(el.value);
+
+            var videoLists = document.getElementById("videoLists");
+            videoLists.innerHTML += '<li>' +  el.value + '</li>';
+
+            el.value = "";
+            document.getElementById("addVideoID").focus();
+          }
+        }
+        var el = document.getElementById("addVideoID");
+        el.addEventListener("click", addVideoID, false);
+
+        function playAll() {
+          currentVideoId = 0;
+          player.loadVideoById(videoIDs[currentVideoId]);
+        }
+        var el = document.getElementById("playAll");
+        el.addEventListener("click", playAll, false);
+
+        function removeAll() {
+          videoIDs.length = 0;
+          
+          var videoLists = document.getElementById("videoLists");
+          videoLists.innerHTML = "";
+        }
+        var el = document.getElementById("removeAll");
+        el.addEventListener("click", removeAll, false);
+
+
+        function prev() {
+          currentVideoId--;
+          if (currentVideoId > 0) {
+            player.loadVideoById(videoIDs[currentVideoId]);
+          }
+          else
+          {
+            currentVideoId = 0;
+          }
+        }
+        var el = document.getElementById("prev");
+        el.addEventListener("click", prev, false);
+
+        function next() {
+          currentVideoId++;
+          if (currentVideoId < videoIDs.length) {
+            player.loadVideoById(videoIDs[currentVideoId]);
+          }
+          else
+          {
+            currentVideoId--;
+          }
+        }
+        var el = document.getElementById("next");
+        el.addEventListener("click", next, false);
+        //]]>
+    </script>
+
+  </body>
+</html>

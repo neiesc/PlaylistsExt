@@ -7,14 +7,9 @@ function onYouTubePlayerAPIReady() {
     width: '640',
     videoId: null,
     events: {
-      'onReady': onPlayerReady,
       'onStateChange': onPlayStateChange
     }
   });
-}
-
-function onPlayerReady(event) {
-  event.target.playVideo();
 }
 
 function onPlayStateChange(event) {

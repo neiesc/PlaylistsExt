@@ -31,8 +31,8 @@ function addVideoID() {
     $.ajax({
       url: video_url,
       dataType: 'jsonp',
-      sucess: function(data) {
-        var video_title = data.data.title;
+      success: function(data) {
+        var video_title = data.entry.title.$t;
         videoIDs.push(el.value);
         var videoLists = document.getElementById("videoLists");
 

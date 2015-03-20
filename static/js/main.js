@@ -27,19 +27,25 @@ function onPlayStateChange(event) {
 function addVideoID() {
   var el = document.getElementById("videoID");
   if (el.value != '') {
-    var video_url = "http://gdata.youtube.com/feeds/api/videos/" + el.value + "?v=2&alt=jsonc"; 
-    $.getJSON(video_url, function(data) {
-      var video_title = data.data.title;
-      videoIDs.push(el.value);
-      var videoLists = document.getElementById("videoLists");
+    var video_url = "http://gdata.youtube.com/feeds/api/videos/" + el.value + "?v=2&alt=json";
+    $.ajax({
+      url: video_url,
+      dataType: 'jsonp',
+      sucess: function(data) {
+        var video_title = data.data.title;
+        videoIDs.push(el.value);
+        var videoLists = document.getElementById("videoLists");
 
-      var btn_remove = '<a class="uk-button btn_remover" title="Remove" onclick="btnRemove(this,\'' + el.value + '\')" ><i class="uk-icon-remove"></i></a>';
+        var btn_remove = '<a class="uk-button btn_remover" title="Remove" onclick="btnRemove(this,\'' + el.value + '\')" ><i class="uk-icon-remove"></i></a>';
 
-      videoLists.innerHTML += '<li>' + video_title + ' (' + el.value + ')' + btn_remove + '</li>';
+        videoLists.innerHTML += '<li>' + video_title + ' (' + el.value + ')' + btn_remove + '</li>';
       
-      el.value = "";
-      document.getElementById("addVideoID").focus();
-    });
+        el.value = "";
+        document.getElementById("addVideoID").focus();
+    },
+    error: function(err) {
+      alert(err);
+    }});
   }
 }
 var el = document.getElementById("addVideoID");

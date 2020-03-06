@@ -27,12 +27,13 @@ function onPlayStateChange(event) {
 function addVideoID() {
   var el = document.getElementById("videoID");
   if (el.value != '') {
-    var video_url = "http://gdata.youtube.com/feeds/api/videos/" + el.value + "?v=2&alt=json";
+    let apiKey = "AIzaSyBnQHY8ixR1H9rn8OdbM1O9KUFuCXxMZ6Q";
+    let video_url = `https://www.googleapis.com/youtube/v3/videos?id=${el.value}&key=${apiKey}&part=snippet`
     $.ajax({
       url: video_url,
       dataType: 'jsonp',
       success: function(data) {
-        var video_title = data.entry.title.$t;
+        var video_title = data.items[0].snippet.title;
         videoIDs.push(el.value);
         var videoLists = document.getElementById("videoLists");
 

@@ -1,0 +1,22 @@
+div.has-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+div.is-tooltip {
+  position: absolute;
+  top: 10px;
+  left: -700px;
+  opacity: 0;
+  transition: all 1s;
+  background: black;
+  color: white;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+div.has-tooltip:hover div.is-tooltip {
+  left: 20px;
+  opacity: 1;
+}

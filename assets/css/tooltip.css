@@ -13,6 +13,7 @@ div.is-tooltip {
   color: white;
   padding: 5px;
   border-radius: 5px;
+  z-index: 1000;
 }
 
 div.has-tooltip:hover div.is-tooltip {

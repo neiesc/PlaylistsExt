@@ -25,40 +25,48 @@ function onPlayStateChange(event) {
 
 /* Controls */
 function addVideoId() {
-  var el = document.getElementById("videoId");
-  if (el.value != "") {
+  let videoId = document.getElementById("videoId").value;
+  if (videoId != "") {
+    if (videoId.includes("youtube.com")) {
+      let urlVideo = new URL(videoId);
+      videoId = urlVideo.searchParams.get("v");
+    }
+
     const apiKey = "AIzaSyBnQHY8ixR1H9rn8OdbM1O9KUFuCXxMZ6Q";
-    const video_url = `https://www.googleapis.com/youtube/v3/videos?id=${el.value}&part=snippet,contentDetails&key=${apiKey}&part=snippet`;
+    const video_url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}&part=snippet`;
     $.ajax({
       url: video_url,
       dataType: "jsonp",
       success: function (data) {
-        console.log(data);
-        var video_title = data.items[0].snippet.title;
+        let videoTitle = data.items[0].snippet.title;
 
         let duration = data.items[0].contentDetails.duration;
         duration = convertDuretion(duration);
 
-        videoIds.push(el.value);
+        videoIds.push(videoId);
         let videoLists = document.getElementById("videoLists");
         let totalDuration = document.getElementById("totalDuration");
 
-        var btn_remove =
+        let btn_remove =
           '<a class="uk-button btn_remover" title="Remove" onclick="btnRemove(this,\'' +
-          el.value +
+          videoId +
           '\')" ><i class="uk-icon-remove"></i></a>';
 
-        videoLists.innerHTML +=
-          `<li>${video_title} (${el.value}) 
-            - ${padLeft(duration.hours, 2)}:${padLeft(duration.minutes, 2)}:${padLeft(duration.seconds, 2)}
+        videoLists.innerHTML += `<li>${videoTitle} (${videoId}) 
+            - ${padLeft(duration.hours, 2)}:${padLeft(
+          duration.minutes,
+          2
+        )}:${padLeft(duration.seconds, 2)}
             ${btn_remove}
           </li>`;
 
-        totalDurationNew = parseInt(totalDuration.dataset.totalDuration, 10) + duration.totalseconds;
+        totalDurationNew =
+          parseInt(totalDuration.dataset.totalDuration, 10) +
+          duration.totalseconds;
         totalDuration.innerHTML = `Total Seconds: ${totalDurationNew}`;
         totalDuration.dataset.totalDuration = totalDurationNew;
-        el.value = "";
-        document.getElementById("addvideoId").focus();
+        document.getElementById("videoId").value = "";
+        document.getElementById("videoId").focus();
       },
       error: function (err) {
         alert(err);
@@ -130,9 +138,9 @@ function convertDuretion(input) {
     totalseconds = hours * 3600 + minutes * 60 + seconds;
   }
 
-  return { hours, minutes, seconds, totalseconds};
+  return { hours, minutes, seconds, totalseconds };
 }
 
-function padLeft(nr, n, str){
-  return Array(n-String(nr).length+1).join(str||'0')+nr;
+function padLeft(nr, n, str) {
+  return Array(n - String(nr).length + 1).join(str || "0") + nr;
 }

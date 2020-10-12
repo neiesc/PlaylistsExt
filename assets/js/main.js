@@ -38,35 +38,7 @@ function addVideoId() {
       url: video_url,
       dataType: "jsonp",
       success: function (data) {
-        let videoTitle = data.items[0].snippet.title;
-
-        let duration = data.items[0].contentDetails.duration;
-        duration = convertDuretion(duration);
-
-        videoIds.push(videoId);
-        let videoLists = document.getElementById("videoLists");
-        let totalDuration = document.getElementById("totalDuration");
-
-        let btn_remove =
-          '<a class="uk-button btn_remover" title="Remove" onclick="btnRemove(this,\'' +
-          videoId +
-          '\')" ><i class="uk-icon-remove"></i></a>';
-
-        videoLists.innerHTML += `<li>${videoTitle} (${videoId}) 
-            - ${padLeft(duration.hours, 2)}:${padLeft(
-          duration.minutes,
-          2
-        )}:${padLeft(duration.seconds, 2)}
-            ${btn_remove}
-          </li>`;
-
-        totalDurationNew =
-          parseInt(totalDuration.dataset.totalDuration, 10) +
-          duration.totalseconds;
-        totalDuration.innerHTML = `Total Seconds: ${totalDurationNew}`;
-        totalDuration.dataset.totalDuration = totalDurationNew;
-        document.getElementById("videoId").value = "";
-        document.getElementById("videoId").focus();
+        addVideo(videoId, data.items[0].snippet.title, data.items[0].contentDetails.duration);
       },
       error: function (err) {
         alert(err);
@@ -76,6 +48,34 @@ function addVideoId() {
 }
 var el = document.getElementById("addVideoID");
 el.addEventListener("click", addVideoId, false);
+
+function addVideo(videoId, title, duration) {
+  duration = convertDuretion(duration);
+
+  videoIds.push(videoId);
+  let videoLists = document.getElementById("videoLists");
+  let totalDuration = document.getElementById("totalDuration");
+
+  let btn_remove = '<a class="uk-button btn_remover" title="Remove" onclick="btnRemove(this,\'' +
+    videoId +
+    '\')" ><i class="uk-icon-remove"></i></a>';
+
+  videoLists.innerHTML += `<li>${title} (${videoId}) 
+            - ${padLeft(duration.hours, 2)}:${padLeft(
+    duration.minutes,
+    2
+  )}:${padLeft(duration.seconds, 2)}
+            ${btn_remove}
+          </li>`;
+
+  totalDurationNew =
+    parseInt(totalDuration.dataset.totalDuration, 10) +
+    duration.totalseconds;
+  totalDuration.innerHTML = `Total: ${convertDuretionToHumanity(totalDurationNew)}`;
+  totalDuration.dataset.totalDuration = totalDurationNew;
+  document.getElementById("videoId").value = "";
+  document.getElementById("videoId").focus();
+}
 
 function playAll() {
   currentvideoId = 0;
@@ -124,14 +124,14 @@ function btnRemove(element, video_id) {
 }
 
 function convertDuretion(input) {
-  var reptms = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
-  var hours = 0,
+  let reptms = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/;
+  let hours = 0,
     minutes = 0,
     seconds = 0,
-    totalseconds;
+    totalseconds = 0;
 
   if (reptms.test(input)) {
-    var matches = reptms.exec(input);
+    let matches = reptms.exec(input);
     if (matches[1]) hours = Number(matches[1]);
     if (matches[2]) minutes = Number(matches[2]);
     if (matches[3]) seconds = Number(matches[3]);
@@ -139,6 +139,22 @@ function convertDuretion(input) {
   }
 
   return { hours, minutes, seconds, totalseconds };
+}
+
+function convertDuretionToHumanity(totalDurationInSeconds) {
+  let hours = 0,
+    minutes = 0,
+    seconds = 0;
+
+  if (totalDurationInSeconds <= 60) {
+    return `${hours}:${minutes}:${totalDurationInSeconds}`;
+  }
+
+  hours = parseInt(totalDurationInSeconds / 3600, 10);
+  minutes = parseInt((totalDurationInSeconds - (hours * 3600)) / 60, 10);
+  seconds = ((totalDurationInSeconds - (minutes * 60)) - (hours * 3600));
+
+  return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 }
 
 function padLeft(nr, n, str) {

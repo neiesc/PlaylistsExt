@@ -58,13 +58,10 @@ function addVideo(videoId, title, duration) {
 
   let btn_remove = '<a class="uk-button btn_remover" title="Remove" onclick="btnRemove(this,\'' +
     videoId +
-    '\')" ><i class="uk-icon-remove"></i></a>';
+    '\')" ><i uk-icon="trash"></i></a>';
 
-  videoLists.innerHTML += `<li>${title} (${videoId}) 
-            - ${padLeft(duration.hours, 2)}:${padLeft(
-    duration.minutes,
-    2
-  )}:${padLeft(duration.seconds, 2)}
+  videoLists.innerHTML += `<li data-total-duration="${duration.totalseconds}">${title} (${videoId}) 
+            - ${padLeft(duration.hours, 2)}:${padLeft(duration.minutes, 2)}:${padLeft(duration.seconds, 2)}
             ${btn_remove}
           </li>`;
 
@@ -118,7 +115,15 @@ el.addEventListener("click", next, false);
 function btnRemove(element, video_id) {
   var index = videoIds.indexOf(video_id);
   if (index > -1) {
+    let totalDuration = document.getElementById("totalDuration");
+
     videoIds.splice(index, 1);
+
+    let totalDurationVideo = $(element).parent()[0].dataset.totalDuration;
+    totalDurationNew = parseInt(totalDuration.dataset.totalDuration, 10) - totalDurationVideo;
+    totalDuration.innerHTML = `Total: ${convertDuretionToHumanity(totalDurationNew)}`;
+    totalDuration.dataset.totalDuration = totalDurationNew;
+
     $(element).parent().remove();
   }
 }
@@ -147,7 +152,7 @@ function convertDuretionToHumanity(totalDurationInSeconds) {
     seconds = 0;
 
   if (totalDurationInSeconds <= 60) {
-    return `${hours}:${minutes}:${totalDurationInSeconds}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${totalDurationInSeconds.toString().padStart(2, "0")}`;
   }
 
   hours = parseInt(totalDurationInSeconds / 3600, 10);

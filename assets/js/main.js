@@ -34,15 +34,13 @@ function addVideoId() {
 
     const apiKey = "AIzaSyBnQHY8ixR1H9rn8OdbM1O9KUFuCXxMZ6Q";
     const video_url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails&key=${apiKey}&part=snippet`;
-    $.ajax({
-      url: video_url,
-      dataType: "jsonp",
-      success: function (data) {
-        addVideo(videoId, data.items[0].snippet.title, data.items[0].contentDetails.duration);
-      },
-      error: function (err) {
-        alert(err);
-      },
+
+    fetch(video_url).then((response) => {
+      return response.json();
+    }).then((data) => {
+      addVideo(videoId, data.items[0].snippet.title, data.items[0].contentDetails.duration);
+    }).catch((err) => {
+      console.warn(err);
     });
   }
 }
@@ -119,12 +117,12 @@ function btnRemove(element, video_id) {
 
     videoIds.splice(index, 1);
 
-    let totalDurationVideo = $(element).parent()[0].dataset.totalDuration;
+    let totalDurationVideo = element.parentNode.dataset.totalDuration;
     totalDurationNew = parseInt(totalDuration.dataset.totalDuration, 10) - totalDurationVideo;
     totalDuration.innerHTML = `Total: ${convertDuretionToHumanity(totalDurationNew)}`;
     totalDuration.dataset.totalDuration = totalDurationNew;
 
-    $(element).parent().remove();
+    element.parentNode.parentNode.removeChild(element.parentNode);
   }
 }
 
